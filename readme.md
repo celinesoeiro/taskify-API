@@ -12,19 +12,3 @@
 - Import tasks from csv files
 - Categorize a task 
 
-## Steps
-✔️ Create a server
-
-✔️ Create a local DB
-
-✔️ Create POST
-
-✔️ Create GET all
-
-✔️ Create GET by id
-
-✔️ Create PUT
-
-✔️ Create DELETE
-
-- Create PATCH
