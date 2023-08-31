@@ -48,4 +48,14 @@ export class Database {
       this.#persist()
     }
   }
+
+  selectById(table, id) {
+    const item = this.#database[table].find(element => element.id === id)
+
+    if (item) {
+      return item
+    } else {
+      return null
+    }
+  }
 }

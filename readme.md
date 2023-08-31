@@ -21,7 +21,10 @@
 
 ✔️ Create GET all
 
-- Create GET by id
+✔️ Create GET by id
+
 - Create PUT
-- Create DELETE
+
+✔️ Create DELETE
+
 - Create PATCH

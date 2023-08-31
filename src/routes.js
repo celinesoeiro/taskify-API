@@ -45,5 +45,22 @@ export const routes = [
 
       return res.writeHead(204).end()
     }
+  },
+  {
+    method: 'GET',
+    path: buildRoutePath('/task/:id'),
+    handler: (req, res) => {
+      const { id } = req.params;
+
+      if (id) {
+        const task = database.selectById('tasks', id)
+
+        if (task) {
+          return res.setHeader('Content-type', 'application/json').end(JSON.stringify(task))
+        } else {
+          return res.writeHead(404).end('Not found')
+        }
+      }
+    }
   }
 ]
