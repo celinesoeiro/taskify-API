@@ -64,16 +64,34 @@ export class Database {
 
     const item = this.#database[table][rowIndex]
 
-    console.log({ item })
-
     if (rowIndex > -1) {
       this.#database[table][rowIndex] = {
         id,
         created_at: item.created_at,
+        updated_at: new Date(),
         ...data
       }
 
       this.#persist()
+    }
+  }
+
+  markAsDone(table, id) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    const item = this.#database[table][rowIndex]
+
+    if (item) {
+      const updatedTask = {
+        ...item,
+        updated_at: new Date(),
+        completed_at: new Date(),
+        completed: true,
+      }
+
+      this.#database[table][rowIndex] = updatedTask;
+
+      return updatedTask
     }
   }
 }

@@ -19,13 +19,17 @@ export const routes = [
     method: 'POST',
     path: buildRoutePath('/tasks'),
     handler: (req, res) => {
-      const { title, description, completed } = req.body
+      const { title, description } = req.body
+
+      if (!title) {
+        return res.writeHead(400).end('Tasks cannot be created without a title')
+      }
 
       const task = {
         id: randomUUID(),
         title,
-        description,
-        completed,
+        description: description ?? '',
+        completed: false,
         created_at: new Date(),
         completed_at: null,
         updated_at: new Date(),
@@ -42,9 +46,13 @@ export const routes = [
     handler: (req, res) => {
       const { id } = req.params;
 
-      database.delete('tasks', id)
+      if (id) {
+        database.delete('tasks', id)
 
-      return res.writeHead(204).end()
+        return res.writeHead(204).end()
+      } else {
+        return res.writeHead(404).end('Task not found')
+      }
     }
   },
   {
@@ -53,14 +61,14 @@ export const routes = [
     handler: (req, res) => {
       const { id } = req.params;
 
-      if (id) {
-        const task = database.selectById('tasks', id)
+      const task = database.selectById('tasks', id)
 
+      if (id && task) {
         if (task) {
           return res.setHeader('Content-type', 'application/json').end(JSON.stringify(task))
         }
       }
-      return res.writeHead(404).end('Not found')
+      return res.writeHead(404).end('Task not found')
     }
   },
   {
@@ -72,19 +80,33 @@ export const routes = [
 
       const task = database.selectById('tasks', id)
 
-      if (task) {
+      if (id && task) {
         database.update('tasks', id, {
           title,
           description,
           completed,
-          updated_at: new Date(),
           completed_at: completed ? new Date() : null,
-          created_at: task.created_at
         })
 
         return res.writeHead(204).end()
       } else {
-        return res.writeHead(404).end('Not found')
+        return res.writeHead(404).end('Task not found')
+      }
+    }
+  },
+  {
+    method: 'PATCH',
+    path: buildRoutePath('/tasks/:id/complete'),
+    handler: (req, res) => {
+      const { id } = req.params;
+      const task = database.selectById('tasks', id)
+
+      if (id && task) {
+        const completedTask = database.markAsDone('tasks', id)
+
+        return res.setHeader('Content-type', 'application/json').end(JSON.stringify(completedTask))
+      } else {
+        return res.writeHead(404).end('Task not found')
       }
     }
   }
