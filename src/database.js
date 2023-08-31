@@ -58,4 +58,22 @@ export class Database {
       return null
     }
   }
+
+  update(table, id, data) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    const item = this.#database[table][rowIndex]
+
+    console.log({ item })
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = {
+        id,
+        created_at: item.created_at,
+        ...data
+      }
+
+      this.#persist()
+    }
+  }
 }

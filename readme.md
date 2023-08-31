@@ -23,7 +23,7 @@
 
 ✔️ Create GET by id
 
-- Create PUT
+✔️ Create PUT
 
 ✔️ Create DELETE
 

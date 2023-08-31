@@ -19,12 +19,13 @@ export const routes = [
     method: 'POST',
     path: buildRoutePath('/tasks'),
     handler: (req, res) => {
-      const { title, description } = req.body
+      const { title, description, completed } = req.body
 
       const task = {
         id: randomUUID(),
-        title: title,
-        description: description,
+        title,
+        description,
+        completed,
         created_at: new Date(),
         completed_at: null,
         updated_at: new Date(),
@@ -57,9 +58,33 @@ export const routes = [
 
         if (task) {
           return res.setHeader('Content-type', 'application/json').end(JSON.stringify(task))
-        } else {
-          return res.writeHead(404).end('Not found')
         }
+      }
+      return res.writeHead(404).end('Not found')
+    }
+  },
+  {
+    method: 'PUT',
+    path: buildRoutePath('/tasks/:id'),
+    handler: (req, res) => {
+      const { id } = req.params;
+      const { title, description, completed } = req.body
+
+      const task = database.selectById('tasks', id)
+
+      if (task) {
+        database.update('tasks', id, {
+          title,
+          description,
+          completed,
+          updated_at: new Date(),
+          completed_at: completed ? new Date() : null,
+          created_at: task.created_at
+        })
+
+        return res.writeHead(204).end()
+      } else {
+        return res.writeHead(404).end('Not found')
       }
     }
   }
