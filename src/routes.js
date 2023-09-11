@@ -82,9 +82,9 @@ export const routes = [
 
       if (id && task) {
         database.update('tasks', id, {
-          title,
-          description,
-          completed,
+          title: title ?? task.title,
+          description: description ?? task.description,
+          completed: completed ?? task.completed,
           completed_at: completed ? new Date() : null,
         })
 
