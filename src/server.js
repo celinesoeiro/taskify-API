@@ -25,7 +25,6 @@ const server = http.createServer(async (req, res) => {
   })
 
   if (req.headers['content-type'] === 'multipart/form-data') {
-    console.log('aqui')
     await readFile(req, res)
   } else {
     await json(req, res)

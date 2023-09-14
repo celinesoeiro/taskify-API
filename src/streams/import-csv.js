@@ -39,8 +39,6 @@ export async function readFile(req, res) {
           // Process each row of CSV data and push it to the results array
           const [title, description] = row
 
-          console.log({ row, title, description })
-
           await fetch('http://localhost:3333/tasks', {
             method: 'POST',
             headers: {

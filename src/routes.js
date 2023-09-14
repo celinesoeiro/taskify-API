@@ -23,8 +23,6 @@ export const routes = [
     method: 'POST',
     path: buildRoutePath('/tasks'),
     handler: async (req, res) => {
-      console.log('ROUTES -> ', req.body)
-
       const { title, description } = req.body
 
       if (!title) {
