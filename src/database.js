@@ -20,8 +20,16 @@ export class Database {
       })
   }
 
-  select(table) {
-    const data = this.#database[table] ?? []
+  select(table, search) {
+    let data = this.#database[table] ?? []
+
+    if (search) {
+      data = data.filter(row => {
+        return Object.entries(search).some(([key, value]) => {
+          return row[key].includes(value)
+        })
+      })
+    }
 
     return data
   }
@@ -85,8 +93,8 @@ export class Database {
       const updatedTask = {
         ...item,
         updated_at: new Date(),
-        completed_at: new Date(),
-        completed: true,
+        completed_at: item.completed_at ? null : new Date(),
+        completed: item.completed_at ? false : true,
       }
 
       this.#database[table][rowIndex] = updatedTask;

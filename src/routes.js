@@ -10,15 +10,21 @@ export const routes = [
     method: 'GET',
     path: buildRoutePath('/tasks'),
     handler: (req, res) => {
-      const tasks = database.select('tasks')
+      const { id } = req.query
 
-      return res.setHeader('Content-type', 'application/json').end(JSON.stringify(tasks))
+      const selectedTask = database.select('tasks', { id })
+
+      const allTasks = database.select('tasks', null)
+
+      return res.setHeader('Content-type', 'application/json').end(JSON.stringify({ allTasks, selectedTask }))
     }
   },
   {
     method: 'POST',
     path: buildRoutePath('/tasks'),
-    handler: (req, res) => {
+    handler: async (req, res) => {
+      console.log('ROUTES -> ', req.body)
+
       const { title, description } = req.body
 
       if (!title) {
@@ -56,22 +62,6 @@ export const routes = [
     }
   },
   {
-    method: 'GET',
-    path: buildRoutePath('/task/:id'),
-    handler: (req, res) => {
-      const { id } = req.params;
-
-      const task = database.selectById('tasks', id)
-
-      if (id && task) {
-        if (task) {
-          return res.setHeader('Content-type', 'application/json').end(JSON.stringify(task))
-        }
-      }
-      return res.writeHead(404).end('Task not found')
-    }
-  },
-  {
     method: 'PUT',
     path: buildRoutePath('/tasks/:id'),
     handler: (req, res) => {
@@ -100,6 +90,8 @@ export const routes = [
     handler: (req, res) => {
       const { id } = req.params;
       const task = database.selectById('tasks', id)
+
+      console.log({ id, task })
 
       if (id && task) {
         const completedTask = database.markAsDone('tasks', id)

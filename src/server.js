@@ -2,6 +2,9 @@ import http from 'node:http';
 
 import { json } from './middlewares/json.js';
 import { routes } from './routes.js';
+import { extractQueryParams } from './utils/extract-query-params.js'
+
+import { readFile } from './streams/import-csv.js'
 
 const server = http.createServer(async (req, res) => {
   const { method, url } = req
@@ -12,29 +15,34 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow only specific headers
 
   // Handle preflight requests (OPTIONS)
-  if (req.method === 'OPTIONS') {
+  if (method === 'OPTIONS') {
     res.writeHead(200);
     res.end();
     return;
   }
-
-  console.log(`Received ${req.method} request at ${req.url}`);
-
-  await json(req, res)
-
   const route = routes.find(r => {
     return r.method === method && r.path.test(url)
   })
 
-  if (route) {
-    const routeParams = url.match(route.path)
+  if (req.headers['content-type'] === 'multipart/form-data') {
+    console.log('aqui')
+    await readFile(req, res)
+  } else {
+    await json(req, res)
 
-    req.params = { ...routeParams.groups }
+    if (route) {
+      const routeParams = url.match(route.path)
 
-    return route.handler(req, res)
+      const { query, ...params } = routeParams.groups
+
+      req.params = params
+      req.query = query ? extractQueryParams(query) : {}
+
+      return route.handler(req, res)
+    }
+
+    return res.writeHead(404).end('Not found')
   }
-
-  return res.writeHead(404).end('Not found')
 })
 
 server.listen(3333);
