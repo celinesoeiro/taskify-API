@@ -20,14 +20,15 @@ const server = http.createServer(async (req, res) => {
     res.end();
     return;
   }
-  const route = routes.find(r => {
-    return r.method === method && r.path.test(url)
-  })
 
   if (req.headers['content-type'] === 'multipart/form-data') {
     await readFile(req, res)
   } else {
     await json(req, res)
+
+    const route = routes.find(r => {
+      return r.method === method && r.path.test(url)
+    })
 
     if (route) {
       const routeParams = url.match(route.path)
