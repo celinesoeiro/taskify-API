@@ -24,7 +24,6 @@ export async function readFile(req, res) {
 
       const fileStream = fs.createReadStream(tempFilePath);
 
-      console.log({ lineCounter })
       fileStream
         .pipe(parse({
           delimiter: ';',
