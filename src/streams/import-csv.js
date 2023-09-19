@@ -51,7 +51,7 @@ export async function readFile(req, res) {
         })
         .on('end', async () => {
           // Respond to the client
-          res.end(JSON.stringify({ message: 'File uploaded and processed successfully.' }));
+          res.writeHead(201).end(JSON.stringify({ message: 'File uploaded and processed successfully.' }));
 
           // Check if the file exists before attempting to unlink it
           if (await fs.promises.access(tempFilePath).then(() => true).catch(() => false)) {
@@ -62,7 +62,7 @@ export async function readFile(req, res) {
       console.error('Error processing file:', error);
 
       // Respond with an error status
-      res.end(JSON.stringify({ error: 'Internal Server Error' }));
+      res.writeHead(500).end(JSON.stringify({ error: 'Internal Server Error' }));
     }
   });
 }
